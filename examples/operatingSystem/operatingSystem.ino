@@ -1,3 +1,30 @@
+/*
+ * Last Updated - March 27, 2012
+ * Open Ocean Reef Controller by Brandon Bearden 
+ *
+ * This work is licensed under the Creative Commons 
+ * Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
+ * To view a copy of this license, visit 
+ * http://creativecommons.org/licenses/by-nc-sa/3.0/
+ * or send a letter to Creative Commons, 444 Castro Street, 
+ * Suite 900, Mountain View, California, 94041, USA.
+ * 
+ * IN NO EVENT SHALL THE LICENSE HOLDER BE LIABLE TO ANY 
+ * PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, 
+ * OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OF THIS 
+ * SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE COPYRIGHT 
+ * HOLDER HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * THE LICENSE HOLDER SPECIFICALLY DISCLAIMS ANY WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. 
+ * THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, 
+ * AND THE LICENCE HOLDER HAS NO OBLIGATION TO PROVIDE 
+ * MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, 
+ * OR MODIFICATIONS.
+ *
+ */
+
 #define NQUEUE 8
 #include <stdint.h>
  
