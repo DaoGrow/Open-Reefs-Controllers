@@ -1,0 +1,22 @@
+This is the Open Reefs Repository
+
+There are two main directories. 
+
+'examples' has code examples that offer the basic functionality of the system.
+This code is meant to test each component of your design to ensure that it is
+working properly. 
+
+'production' has code that has full functionality and is meant for production
+systems. This code has been tested and works on the specific system it was 
+designed for. It may function on other systems but be advised that it has not
+been tested on any other system.
+
+The 'dev' diretory is really for developers only. You are free to browse and
+even download any of the code but in general you will find it useless.
+
+If you have questions or comments about anything please do not hesitate to ask.
+
+brandon@openreefs.com
+
+Regards,
+Brandon Bearden
