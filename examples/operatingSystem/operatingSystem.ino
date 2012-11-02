@@ -1,5 +1,5 @@
 /*
- * Last Updated - March 27, 2012
+ * Last Updated - November 2, 2012
  * Open Ocean Reef Controller by Brandon Bearden 
  *
  * This work is licensed under the Creative Commons 
@@ -25,120 +25,91 @@
  *
  */
 
-#define NQUEUE 8
+// There are three parts to this code, the header, the cpp and the sketch. 
+// You really should break them up instead of keeping them in one file like
+// it is shown here. The only reason I kept it in one file is to deomonstrate all
+// of the pieces in one place.
+
+//--- This should go into a header file really...
 #include <stdint.h>
- 
-// This class handles the actual events we are going to perform.
-// In the example we have a NTP request and a Clock time.
+#include <Arduino.h>
+
 class Event
 {
 public:
   uint16_t timeout;
   virtual void act()=0;
 };
- 
-// This class actually keeps track of all of the Events in a structured order
-// processing them as quickly as possible.
-// This is the key to the entire design, create lots of small very fast events
-// and keep them rolling through the queue.
+
 class Queue
 {
 public:
+  static const int NQUEUE = 16;
   Event * data[NQUEUE];
   int qstart,qend,qlength;
- 
-  Queue()
-  {
-    qstart=0;
-    qend=0;
-    qlength=0;
-  }
- 
-  void add(Event *e)
-  {
-    if (qlength < NQUEUE) {
-      data[qend]=e;
-      if (++qend == NQUEUE) qend=0;
-      ++qlength;
-    }
-  }
- 
-  bool stale()
-  {
-    return (qlength > 0) && ((int16_t)(data[qstart]->timeout-millis()) <= 0);
-  }
- 
-  Event *get()
-  {
-    Event *ans=0;
-    if (qlength > 0) {
-      ans=data[qstart];
-      if (++qstart == NQUEUE) qstart=0;      
-      --qlength;
-    }
-    return ans;
-  }
+  Queue();
+  void add(Event *e); 
+  bool stale();
+  Event *get();
 };
  
-Queue queue;
- 
-class Idle : public Event
+extern Queue mainQueue;
+
+///--- This should go into a cpp file linked to the above header
+
+Queue::Queue()
 {
-public:
-  void act() {  };
-};
- 
-Idle idle;
- 
-//Example of Thread
-class NTPRequest : public Event
+  qstart=0;
+  qend=0;
+  qlength=0;
+}
+
+void Queue::add(Event *e)
 {
-  void act() {};
-};
- 
-NTPRequest ntp_request;
- 
-//Example of Thread
-class Clock : public Event
-{
-public:
-  int h,m,s;
-  Clock()
-  {
-    h=m=s=0;
-  }
- 
-  void act()
-  {
-    if (++s == 60) {
-      s=0;
-      if (++m == 60) {
-        m=0;
-        ++h;
-      }
-    }
-    timeout=millis()+1000;
-    queue.add(this);
- 
-    if (s == 0 && m == 0) {
-      ntp_request.timeout=millis()+0;
-      queue.add(&ntp_request);
+  if (qlength < NQUEUE) {
+    int at=qend, before = (before > 0) ? at - 1 : NQUEUE - 1;
+    data[qend]=e;
+    if (++qend == NQUEUE) qend=0;
+    ++qlength;
+    while (at != qstart && (int16_t)(data[before]->timeout-(e->timeout)) > 0) {
+      data[at]=data[before];
+      data[before]=e;
+      at = before;
+      before = (before > 0) ? before - 1 : NQUEUE - 1;
     }
   }
-};
- 
- 
-Clock clock;
- 
-void setup()
+}
+
+bool Queue::stale()
 {
-  clock.timeout=millis()+1000;
-  queue.add(&clock);
+  return (qlength > 0) && ((int16_t)(data[qstart]->timeout-millis()) <= 0);
+}
+
+Event *Queue::get()
+{
+  Event *ans=0;
+  if (qlength > 0) {
+    ans=data[qstart];
+    if (++qstart == NQUEUE) qstart=0;      
+    --qlength;
+  }
+  return ans;
 }
  
-void loop()
-{
-  if (queue.stale()) {
-    queue.get()->act();
-  } else idle.act();
+Queue mainQueue;
+
+//--- You should include your header file here and only have this in the sketch. 
+
+void setup(){
+  //Add the kickoff event
+  //mainQueue.add(&someEvent); 
+}
+
+void loop() {
+  while (mainQueue.stale()) {
+    Event *e = mainQueue.get();
+    e->act();
+  }
+  // This is the event that will run when the system is idle.
+  //idleEvent();
 }
